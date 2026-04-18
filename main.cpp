@@ -26,9 +26,14 @@ int main(int argc, char *argv[])
             
             break;
         case 2:
-            if (std::strcmp(argv[1], "get") == 0)
+            if (std::strcmp(argv[1], "pull") == 0)
             {
-                std::cout << "GET" << std::endl;
+                std::cout << "pulling..." << std::endl;
+            }
+            else 
+            if (std::strcmp(argv[1], "push") == 0)
+            {
+                std::cout << "pushing..." << std::endl;
             }
             else 
             {
