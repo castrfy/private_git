@@ -1,4 +1,4 @@
-# private_git
+# private_git [IN DEVELOPMENT]
 A Homemade, Fully Private and Open Source Version of GitHub
 
 # Requirements
