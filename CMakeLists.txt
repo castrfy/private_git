@@ -6,9 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_library(includes INTERFACE)
-target_include_directories(includes INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
 #httplib
 include(FetchContent)
 
@@ -19,7 +16,10 @@ FetchContent_Declare(httplib SYSTEM
 FetchContent_MakeAvailable(httplib)
 
 
-add_executable(pgit main.cpp)
+add_library(includes INTERFACE)
+target_include_directories(includes INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+add_executable(pgit src/main.cpp)
 target_compile_definitions(pgit PUBLIC CPPHTTPLIB_OPENSSL_SUPPORT)
 
 target_link_libraries(pgit PUBLIC httplib includes)
