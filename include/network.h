@@ -2,6 +2,8 @@
 #include <iostream>
 #include <httplib.h>
 #include <file_management.h>
+#include <json.hpp>
+#include <vector>
 
 bool push( std::string repo, std::string branch)
 {
@@ -17,7 +19,7 @@ bool push( std::string repo, std::string branch)
     {
         std::ifstream file(filename, std::ios::binary);
         if (!file) {
-            std::cerr << "- File \""<< filename << "\" Doesnt Exists" << std::endl;
+            std::cerr << "[-] File \""<< filename << "\" Doesnt Exists" << std::endl;
             return false;
 
         }
@@ -28,7 +30,6 @@ bool push( std::string repo, std::string branch)
         );
         file.close();
 
-        // Sunucuya bağlan
         httplib::Client client(SERVER_URL);
 
         httplib::Headers headers = {
@@ -48,20 +49,90 @@ bool push( std::string repo, std::string branch)
         {
             if (res->status != 201)
             {
-                std::cerr << "- \"" << filename << "\" Error " << res->status << ": " << res->body << std::endl;
+                std::cerr << "[!] \"" << filename << "\" Error HTTP " << res->status << ": " << res->body << std::endl;
                 return false;
             }
             else
             {
-                std::cout << "+ \"" << filename << "\" " << res->body << std::endl;
+                std::cout << "[+] \"" << filename << "\" " << res->body << std::endl;
             }
         } 
         else 
         {
-            std::cerr << "- \"" << filename << "\" Connection Error: " << httplib::to_string(res.error()) << std::endl;
+            std::cerr << "[!] \"" << filename << "\" Connection Error: " << httplib::to_string(res.error()) << std::endl;
             return false;
         }
     }
     return true;
     
+}
+
+bool pull( std::string repo, std::string branch)
+{
+
+    using json = nlohmann::json;
+
+    httplib::Client client(SERVER_URL);
+    auto res = client.Get(std::string("/repo/")+repo);
+
+    if (res) 
+    {
+        if (res->status != 302)
+        {
+            std::cerr << "Error " << res->status << ":" << std::endl << res->body << std::endl;
+            return false;
+        }
+        else
+        {
+            std::cout << "Found the files from the repo \"" << repo << "\" " << res->body << std::endl;
+            std::vector<std::string> files = json::parse(res->body);
+            std::cout << files.size() << std::endl;
+            for (std::string file : files)
+            {
+                httplib::Client client(SERVER_URL);
+
+
+                // Büyük dosyalar için Content Receiver ile chunk chunk oku
+                std::ofstream ofs(file, std::ios::binary);
+                if (!ofs.is_open()) {
+                    std::cerr << "[!] Couldn't create or update file: " << file << "\n";
+                    return false;
+                }
+
+                httplib::Request req;
+                req.method = "GET";
+                req.path = "/pull";
+                req.body = "{\"filename\": \"" + file +  "\", \"repo\": \"" + repo + "\"}";
+                req.set_header("Content-Type", "application/json");
+                req.content_receiver = (httplib::ContentReceiverWithProgress) [&](const char* data, size_t length, uint64_t offset, uint64_t totallength) -> bool {
+                        ofs.write(data, length);
+                        return true; 
+                    };
+                auto result = client.send(req);
+
+                ofs.close();
+
+                if (!result) {
+                    std::cerr << "[!] Connection error: "
+                            << httplib::to_string(result.error()) << "\n";
+                    return false;
+                }
+
+                if (result->status != 200) {
+                    std::cerr << "[!] Error, HTTP " << result->status
+                            << ": " << result->body << "\n";
+                    return false;
+                }
+
+                std::cout << "[+] pulled file \"" << file << "\"\n";
+            }
+            return true;
+            
+        }
+    } 
+    else 
+    {
+        std::cerr << "Connection Error while pulling the files: " << httplib::to_string(res.error()) << std::endl;
+        return false;
+    }
 }

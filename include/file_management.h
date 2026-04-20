@@ -64,69 +64,141 @@ void initialize()
     }
 }
 
-void addFile(std::string filepath)
+int addFile(std::string filepath, bool isOnRecursive=false)
 {
     if (!fs::exists(fs::path(filepath)))
     {
         std::cerr << "File not found \"" << filepath << "\"" << std::endl;
-        return;
+        return 0;
     }
-    if (fs::is_directory(filepath))
+
+    // .ignore file
+    static std::vector<std::string> ignores;
+    static bool ignores_loaded = false;
+    if (!ignores_loaded) 
     {
-        for (const auto& entry : fs::directory_iterator(filepath)) {
-            addFile(entry.path().c_str());
+        if (fs::exists(IGNORE_FILE_NAME))
+        {
+            std::cout << "Reading " << IGNORE_FILE_NAME << std::endl;
+            ignores.push_back(IGNORE_FILE_NAME);
+            std::ifstream ignore_file(IGNORE_FILE_NAME);
+            if (ignore_file.is_open())
+            {
+                std::string line;
+                while (std::getline(ignore_file, line)) 
+                {
+                    ignores.push_back(line);
+                }
+
+                ignore_file.close();
+            }
+            else
+            {
+                std::cerr << "[!] Error: Couldn't open " << IGNORE_FILE_NAME << std::endl;
+            }
         }
+        else std::cout << "There is no " << IGNORE_FILE_NAME << " file every file will be included." << std::endl;
+        
+        std::cout << ignores.size() << " files will be ignored" << std::endl;
+        ignores_loaded = true;
     }
-    else 
+
+
+    int counter = 0;
+    static std::vector<std::string> oldcommit;
+    static bool oldcommit_loaded = false;
+    static std::vector<std::string> newcommit;
+    
+
+    //old commit
+    if (!oldcommit_loaded)
     {
         fs::path commit_path(".pgit/.commit");
         if (fs::exists(commit_path)&& !fs::is_directory(commit_path))
         {
-            std::ifstream file(commit_path);
-            if (file.is_open()) 
+
+            std::ifstream commit_file(commit_path);
+            if (commit_file.is_open()) 
             {
-                std::vector<std::string> oldcommit;
                 std::string line;
-                while (std::getline(file, line)) 
+                while (std::getline(commit_file, line)) 
                 {
                     oldcommit.push_back(line);
                 }
-                
-                file.close();
-
-                std::ofstream newfile(commit_path);
-                if (newfile.is_open())
-                {
-                    for (std::string line : oldcommit)
-                    {
-                        if (line != filepath )
-                            newfile << line << std::endl;
-                    }
-
-                    newfile << filepath;
-                    newfile.close();
-
-                    std::cout << "File \"" << filepath << "\" added to commission" << std::endl;
-                }
-                else
-                {
-                    std::cerr << "Unable to open .commit file" << std::endl;
-                    newfile.close();
-                }
-                
-            } 
+            }
             else 
             {
                 std::cerr << "Unable to open .commit file" << std::endl;
-                file.close();
+                commit_file.close();
             }
         }
         else 
         {
             std::cout << name << " not initialized properly" << std::endl << "\ttry running \"" << name << " init\"" << std::endl;;
         }
+
+    }
+
+
+    
+
+    if (!fs::is_directory(filepath)) 
+    {
+        //ignoring
+        bool willignore = false;
+        for (std::string ignore : ignores)
+        {
+            if ( std::string(fs::path(filepath).filename()).find(ignore) != std::string::npos){
+                willignore = true;
+
+            }
+            
+        }
+        
+        if (!willignore) 
+        {
+            newcommit.push_back(filepath);
+            counter++;
+        }
+    }
+    else
+    {
+        for (const auto& entry : fs::directory_iterator(filepath)) {
+            counter += addFile(entry.path().c_str(), true);
+        }
+    }
+
+
+    if (!isOnRecursive)
+    {
+        std::cout << "Writing into .commit file..." << std::endl;
+
+        fs::path commit_path(".pgit/.commit");
+        std::ofstream newfile(commit_path);
+        if (newfile.is_open())
+        {
+            for (std::string line : newcommit)
+            {
+                
+                newfile << line << std::endl;
+            }
+
+            newfile.close();
+
+            std::cout << "Writing finished." << std::endl;
+
+            //std::cout << "File \"" << filepath << "\" added to commission" << std::endl;
+        }
+        else
+        {
+            std::cerr << "Unable to open .commit file" << std::endl;
+            newfile.close();
+        }
+                
     }
     
+    
+    return counter;
 }
 
 std::vector<std::string> get_file_paths()

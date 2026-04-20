@@ -2,6 +2,7 @@
 #include <iostream>
 
 #define SERVER_URL "https://pgit.zenofy.tr"
+#define IGNORE_FILE_NAME ".ignore"
 
 char *name;
 std::string version = "v1.0";

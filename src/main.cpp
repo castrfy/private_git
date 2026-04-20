@@ -35,6 +35,14 @@ int main(int argc, char *argv[])
                         clear_commission();
                     }
                 }
+                else if (std::strcmp(argv[1], "pull") == 0)
+                {
+                    if (pull("main","main")) 
+                    {
+                        std::cout << "Successfully pulled the latest version" << std::endl;
+                        
+                    }
+                }
                 else if (std::strcmp(argv[1], "--server-status") == 0)
                 {
                     using namespace httplib;
@@ -44,7 +52,7 @@ int main(int argc, char *argv[])
                     if (auto res = cli.Get("/")) {
                         int status = res->status;
                         std::string body = res->body;
-                        std::cout << status << ": " << body << std::endl;
+                        std::cout << "HTTP " << status << ": " << body << std::endl;
                     }
                 }
                 else 
@@ -57,16 +65,16 @@ int main(int argc, char *argv[])
             {
                 if (std::strcmp(argv[1], "pull") == 0)
                 {
-                    std::cout << "pulling..." << std::endl;
+                    pull(argv[2],"main");
                 }
                 else if (std::strcmp(argv[1], "push") == 0)
                 {
-                    std::cout << "pushing..." << std::endl;
-                    push("main","main");
+                    push(argv[2],"main");
                 }
                 else if (std::strcmp(argv[1], "add") == 0)
                 {
-                    addFile(argv[2]);
+                    
+                    std::cout << addFile(argv[2]) <<" Files added to commission" << std::endl;
                 }
                 else 
                 {
