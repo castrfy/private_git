@@ -43,6 +43,13 @@ int main(int argc, char *argv[])
                         
                     }
                 }
+                else if (std::strcmp(argv[1], "reset") == 0)
+                {
+                    std::cout << "Resetted the commision" << std::endl;
+                    clear_commission();
+                        
+                    
+                }
                 else if (std::strcmp(argv[1], "--server-status") == 0)
                 {
                     using namespace httplib;

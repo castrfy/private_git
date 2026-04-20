@@ -81,6 +81,7 @@ int addFile(std::string filepath, bool isOnRecursive=false)
         {
             std::cout << "Reading " << IGNORE_FILE_NAME << std::endl;
             ignores.push_back(IGNORE_FILE_NAME);
+            ignores.push_back(".pgit/");
             std::ifstream ignore_file(IGNORE_FILE_NAME);
             if (ignore_file.is_open())
             {
@@ -99,7 +100,7 @@ int addFile(std::string filepath, bool isOnRecursive=false)
         }
         else std::cout << "There is no " << IGNORE_FILE_NAME << " file every file will be included." << std::endl;
         
-        std::cout << ignores.size() << " files will be ignored" << std::endl;
+        std::cout << ignores.size() << " file names will be ignored" << std::endl;
         ignores_loaded = true;
     }
 
@@ -136,7 +137,7 @@ int addFile(std::string filepath, bool isOnRecursive=false)
         {
             std::cout << name << " not initialized properly" << std::endl << "\ttry running \"" << name << " init\"" << std::endl;;
         }
-
+        oldcommit_loaded = true;
     }
 
 
@@ -148,7 +149,7 @@ int addFile(std::string filepath, bool isOnRecursive=false)
         bool willignore = false;
         for (std::string ignore : ignores)
         {
-            if ( std::string(fs::path(filepath).filename()).find(ignore) != std::string::npos){
+            if ( std::string(filepath).find(ignore) != std::string::npos){
                 willignore = true;
 
             }
