@@ -158,7 +158,8 @@ int addFile(std::string filepath, bool isOnRecursive=false)
         
         if (!willignore) 
         {
-            newcommit.push_back(filepath);
+            
+            newcommit.push_back(fs::path(filepath.c_str()));
             counter++;
         }
     }
