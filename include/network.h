@@ -90,9 +90,18 @@ bool pull( std::string repo, std::string branch)
             for (std::string file : files)
             {
                 httplib::Client client(SERVER_URL);
+                const fs::path parent_path = fs::path(file).parent_path();
+                if (parent_path != "")
+                if (!(fs::exists(parent_path) && fs::is_directory(parent_path)))
+                {
+                    if (fs::create_directories(parent_path)) std::cout << "Created folder for the file" << std::endl;
+                    else 
+                    {
+                        std::cerr << "Couldnt create the folder needed.";
+                        abort();
+                    }
+                }
 
-
-                // Büyük dosyalar için Content Receiver ile chunk chunk oku
                 std::ofstream ofs(file, std::ios::binary);
                 if (!ofs.is_open()) {
                     std::cerr << "[!] Couldn't create or update file: " << file << "\n";

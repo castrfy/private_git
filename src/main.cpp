@@ -8,7 +8,6 @@
 
 
 
-
 int main(int argc, char *argv[])
 {
     name = argv[0];
@@ -17,7 +16,6 @@ int main(int argc, char *argv[])
         case 1:
             printVersion();
             printUsage();
-            
             break;
         case 2:
             {
@@ -47,8 +45,6 @@ int main(int argc, char *argv[])
                 {
                     std::cout << "Resetted the commision" << std::endl;
                     clear_commission();
-                        
-                    
                 }
                 else if (std::strcmp(argv[1], "--server-status") == 0)
                 {
@@ -93,9 +89,4 @@ int main(int argc, char *argv[])
             break;
     }
 
-
-
-
-
-    //std::cout << "sa" << std::endl;
 }
