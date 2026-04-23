@@ -159,14 +159,14 @@ int addFile(std::string filepath, bool isOnRecursive=false)
         if (!willignore) 
         {
             
-            newcommit.push_back(fs::path(filepath.c_str()));
+            newcommit.push_back(filepath);
             counter++;
         }
     }
     else
     {
         for (const auto& entry : fs::directory_iterator(filepath)) {
-            counter += addFile(entry.path().c_str(), true);
+            counter += addFile(entry.path().string(), true);
         }
     }
 
