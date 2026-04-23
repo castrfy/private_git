@@ -81,7 +81,7 @@ int addFile(std::string filepath, bool isOnRecursive=false)
         {
             std::cout << "Reading " << IGNORE_FILE_NAME << std::endl;
             ignores.push_back(IGNORE_FILE_NAME);
-            ignores.push_back(".pgit/");
+            ignores.push_back(".pgit");
             std::ifstream ignore_file(IGNORE_FILE_NAME);
             if (ignore_file.is_open())
             {
