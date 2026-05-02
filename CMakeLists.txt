@@ -16,10 +16,16 @@ FetchContent_Declare(httplib SYSTEM
 FetchContent_MakeAvailable(httplib)
 
 
+FetchContent_Declare(
+  json
+  GIT_REPOSITORY https://github.com/nlohmann/json
+)
+FetchContent_MakeAvailable(json)
+
 add_library(includes INTERFACE)
 target_include_directories(includes INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_executable(pgit src/main.cpp)
 target_compile_definitions(pgit PUBLIC CPPHTTPLIB_OPENSSL_SUPPORT)
 
-target_link_libraries(pgit PUBLIC httplib includes)
+target_link_libraries(pgit PUBLIC nlohmann_json::nlohmann_json httplib includes)
