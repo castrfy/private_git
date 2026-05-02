@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 
-#define SERVER_URL "https://pgit.zenofy.tr"
+#define SERVER_URL std::getenv("SERVER_URL")
 #define IGNORE_FILE_NAME ".ignore"
 
 char *name;
