@@ -4,6 +4,7 @@
 #include <helps.h>
 #include <network.h>
 #include <file_management.h>
+#include <diff.h>
 
 
 
@@ -84,6 +85,18 @@ int main(int argc, char *argv[])
                     printUsage();
                 }
             } break;
+        case 4:
+            {
+                if (std::strcmp(argv[1], "diff") == 0)
+                {
+                    calculate_diff(argv[2], argv[3]);
+                }
+                else 
+                {
+                    printUsage();
+                }
+            } break;
+            
         default:
             printUsage();
             break;
