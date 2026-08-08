@@ -1,12 +1,13 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <string_view>
 #include <vector>
 
-bool calculate_diff(std::string filename1, std::string filename2)
+bool calculate_diff(std::string_view filename1, std::string_view filename2)
 {
-    std::ifstream file1(filename1);
-    std::ifstream file2(filename2);
+    std::ifstream file1(filename1.data());
+    std::ifstream file2(filename2.data());
     std::vector<std::string> data1;
     std::vector<std::string> data2;
 
@@ -44,6 +45,8 @@ bool calculate_diff(std::string filename1, std::string filename2)
     std::vector<size_t> created; //index on file2
     std::vector<size_t> removed; //index on file1
 
+    std::cout << "Dosya 1 " << data1.size() << std::endl;
+    std::cout << "Dosya 2 " << data2.size() << std::endl;
     int line_diff = data1.size() - data2.size();
     int create_count = 0;
     int removed_count = 0;
@@ -65,7 +68,6 @@ bool calculate_diff(std::string filename1, std::string filename2)
     else if (line_diff < 0) //data2 büyük
     {
         std::vector<int> shifted(data1.size(), 0);
-        
         // çıkarılanlar
         size_t found_i = -1;
         for (size_t k = 1; k <= -line_diff; k++)
@@ -121,6 +123,7 @@ bool calculate_diff(std::string filename1, std::string filename2)
         
         for (size_t i = data1.size(); i < data2.size(); i++)
         {
+            std::cout << i << ": " << i - shifted[i-1] << std::endl;
             if (data1[i - shifted[i-1]] == data2[i])
             {
                 shifted[i] = shifted[i-1];

@@ -4,7 +4,7 @@
 #include <helps.h>
 #include <network.h>
 #include <file_management.h>
-#include <diff.h>
+#include <diff/line_by_line.h>
 
 
 
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
             {
                 if (args[1].compare("diff") == 0)
                 {
-                    calculate_diff(argv[2], argv[3]);
+                    calculate_diff_lbl(args[2], args[3]);
                 }
                 else 
                 {

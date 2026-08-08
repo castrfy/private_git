@@ -10,8 +10,6 @@ bool push( std::string repo, std::string branch)
 {
     std::cout << "Pushing the files to the repo \"" << repo << "\"..." << std::endl;
 
-    std::string server_url = SERVER_URL ? SERVER_URL : "";
-
     std::vector<std::string> filepaths(get_file_paths());
     if (filepaths.empty())
     {
@@ -34,8 +32,8 @@ bool push( std::string repo, std::string branch)
             std::istreambuf_iterator<char>()
         );
         file.close();
-        std::cout << server_url << std::endl;
-        httplib::Client client(server_url);
+        std::cout << SERVER_URL << std::endl;
+        httplib::Client client(SERVER_URL);
 
         httplib::Headers headers = {
             { "X-Filename", filename }
@@ -74,11 +72,10 @@ bool push( std::string repo, std::string branch)
 
 bool pull( std::string repo, std::string branch)
 {
-    std::string server_url = SERVER_URL ? SERVER_URL : "";
 
     using json = nlohmann::json;
 
-    httplib::Client client(server_url);
+    httplib::Client client(SERVER_URL);
     auto res = client.Get(std::string("/repo/")+repo);
 
     if (res) 
@@ -95,7 +92,7 @@ bool pull( std::string repo, std::string branch)
             std::cout << files.size() << std::endl;
             for (std::string file : files)
             {
-                httplib::Client client(server_url);
+                httplib::Client client(SERVER_URL);
                 const fs::path parent_path = fs::path(file).parent_path();
                 if (parent_path != "")
                 if (!(fs::exists(parent_path) && fs::is_directory(parent_path)))
