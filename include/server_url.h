@@ -1,1 +1,1 @@
-#define SERVER_URL "https://example.com"
+#define SERVER_URL "abc"
