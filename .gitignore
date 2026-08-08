@@ -3,4 +3,4 @@ build/
 .DS_Store
 ._
 .env
-server_url.h
+include/server_url.h
