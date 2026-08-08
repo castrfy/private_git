@@ -1,10 +1,11 @@
 #pragma once
+#include <string_view>
+#include <vector>
 #include <iostream>
 
-#define SERVER_URL std::getenv("SERVER_URL")
 #define IGNORE_FILE_NAME ".ignore"
 
-char *name;
+std::string_view name;
 std::string version = "v1.0";
 
 void printUsage()
