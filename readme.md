@@ -4,4 +4,4 @@ A Homemade, Fully Private and Open Source Version of GitHub
 # Requirements
 
 - `OpenSSL` 3.0.0 or higher versions
-- `.env` file that has `SERVER_URL` variable defined with url of the server inside. [exm: `SERVER_URL = "https://example.com"`]
+- A `server_url.h` file inside the `include` folder with the url of the server defined as the `SERVER_URL`. [exm: `#define SERVER_URL "https://example.com"`]
